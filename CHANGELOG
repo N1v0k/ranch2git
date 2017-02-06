@@ -1,0 +1,11 @@
+## Change history
+### [v0.0.1] [31.01.2017]
++ Changelog
++ License
+* public release
+
+#### To do:
++ logs by beeing more verbose
++ refactor code and make it pretty
++ tests
++ allow to use without rancher authentication
