@@ -24,7 +24,6 @@ Github:
   image: alpine
   script:
     - apk update && apk --no-cache add git
-    - git pull "https://$github_repo_user:$github_repo_pw@github.com/Gmentsik/ranch2git.git"
     - git push "https://$github_repo_user:$github_repo_pw@github.com/Gmentsik/ranch2git.git" HEAD:master
   only:
     - stable
