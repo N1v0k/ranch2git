@@ -1,7 +1,9 @@
 # Ranch2Git
-[ ![Codeship Status for Gmentsik/ranch2git](https://app.codeship.com/projects/4dd96aa0-ce93-0134-ec19-3e4d19dff638/status?branch=master)](https://app.codeship.com/projects/200571)
+[ ![Codeship Status for Gmentsik/ranch2git](https://app.codeship.com/projects/c5be5190-cedd-0134-3391-22c62aa246c8/status?branch=master)](https://app.codeship.com/projects/200689)
 [![](https://images.microbadger.com/badges/image/gmentsik/ranch2git.svg)](https://microbadger.com/images/gmentsik/ranch2git "Get your own image badge on microbadger.com")
 [![Docker Repository on Quay](https://quay.io/repository/gmentsik/ranch2git/status "Docker Repository on Quay")](https://quay.io/repository/gmentsik/ranch2git)
+
+
 - [Introduction](#introduction)
 - [Getting started](#getting-started)
   - [Installation](#installation)
