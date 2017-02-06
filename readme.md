@@ -1,0 +1,125 @@
+# Ranch2Git
+[ ![Codeship Status for Gmentsik/ranch2git](https://app.codeship.com/projects/4dd96aa0-ce93-0134-ec19-3e4d19dff638/status?branch=master)](https://app.codeship.com/projects/200571)
+[![](https://images.microbadger.com/badges/image/gmentsik/ranch2git.svg)](https://microbadger.com/images/gmentsik/ranch2git "Get your own image badge on microbadger.com")
+[![Docker Repository on Quay](https://quay.io/repository/gmentsik/ranch2git/status "Docker Repository on Quay")](https://quay.io/repository/gmentsik/ranch2git)
+- [Introduction](#introduction)
+- [Getting started](#getting-started)
+  - [Installation](#installation)
+  - [Quickstart](#quickstart)
+  - [Environment Variables](#environment-variables)
+- [To-Do](#todo)
+- [Contributing](#contributing)
+- [Issues](#issues)
+
+# Warning
+This code is in the stage of "Proof-of-concept".
+This means that there is a lot of work todo yet. The application works, but the code is a total mess.
+
+# Introduction
+
+Ranch2Git keeps track of your [Rancher](http://rancher.com/) stacks.
+It is supposed to be deployed as a [Dockerimage](https://www.docker.com/).
+As such, it can be easily deployed with Rancher, making it really easy to use.
+
+# Getting started
+
+## Installation
+
+Automated builds of the image are available on [Dockerhub](https://hub.docker.com/r/gmentsik/ranch2git) and is the recommended method of installation.
+
+```bash
+docker pull gmentsik/ranch2git
+```
+
+_Alternatively you can build the image yourself._
+
+```bash
+docker build -t ranch2git github.com/gmentsik/ranch2git
+```
+
+## Quickstart
+The recommended way of running ranch2git is to deploy it directly as service in Rancher.
+
+1. Create a new Git-Repository on your host. This can be any Git-Repo on any host. 
+_Please note that currently only HTTP(S) is supported, since the main target is Github and GitLab_
+
+2. Make sure you have access to your repo with a username + password combination. (HTTP Simple Auth)
+
+3. Add a new [Account API Key in Rancher](http://docs.rancher.com/rancher/v1.4/en/api/v2-beta/api-keys/)
+_Rancher Web UI -> API -> Add Account API Key_
+
+5. You can copy&paste this docker-compose file in a new rancher-stack.
+
+6. Replace the `RANCHER_API_USER` and `RANCHER_API_PASS` environmental variables with the generated User and Password.
+
+
+```yaml
+version: '2'
+services:
+  ranch2github:
+    image: gmentsik/ranch2git:latest
+    environment:
+      RANCHER_APIV2_URL: http://rancher-url.com/v2-beta
+      RANCHER_API_USER: api-user
+      RANCHER_API_PASS: api-user-password
+      GIT_REPO_URL: https://github.com/username/repo.git
+      GIT_REPO_USER: username
+      GIT_REPO_PASS: password
+      UPDATE_EVERY: 5m
+    stdin_open: true
+    network_mode: host
+    tty: true
+    labels:
+      io.rancher.container.pull_image: always
+```
+
+*Alternatively, you can use the sample [docker-compose.yml](docker-compose.yml) file to start the container using [Docker Compose](https://docs.docker.com/compose/)*
+
+## Environment Variables
+
+
+| Variable          | Default Value   | Description                                                                     | Examples                                          |
+| ----------------- | --------------- | --------------------------------------------------------------------------------| ------------------------------------------------- |
+| RANCHER_APIV2_URL | ""              | The full URL to your Rancher API V2                                             | `http://rancher.company1.com/v2-beta`             |
+| RANCHER_API_USER  | ""              | The generated rancher API User                                                  | `2CE23B40FA3761K91C66`                            |
+| RANCHER_API_PASS  | ""              | The generated password of your rancher API User                                 | `A2nO8r43jAMrXMQeJd5VpFvEYHKzYgKPSuuTt7ct`        |
+| GIT_REPO_URL      | ""              | Full http URL to your Git-Repository                                            | `https://github.com/company1/rancher-conf.git`    |
+| GIT_REPO_USER     | ""              | Your Git-Username                                                               | `company1`                                        |
+| GIT_REPO_PASS     | ""              | Your Git Password                                                               | `soVeryStrongPasswordCannotBeHacked`              |
+| UPDATE_EVERY      | "5m"            | The Frequency of the script execution.                                          | `1m`, `10s`, `2h`                                 |
+
+    
+
+## Shell Access
+
+For debugging and maintenance purposes you may want access the containers shell. If you are using Docker version `1.3.0` or higher you can access a running containers shell by starting `bash` using `docker exec`:
+
+```bash
+docker exec -it ranch2git bash
+```
+
+everything happens inside the `/root` folder.
+
+# To-Do
++ refactor code and make it smaller and more effective
++ refactor repos, own repo for application and own repo for Docker
++ setup some kind of CI with Github for the binary
+
+# Contributing
+
+If you find this image useful here's how you can help:
+
+- Send a pull request with your awesome features and bug fixes
+- Help users resolve their [issues](../../issues?q=is%3Aopen+is%3Aissue).
+
+# Issues
+
+Before reporting your issue please try updating Docker to the latest version and check if it resolves the issue. Refer to the Docker [installation guide](https://docs.docker.com/installation) for instructions.
+
+SELinux users should try disabling SELinux using the command `setenforce 0` to see if it resolves the issue.
+
+If the above recommendations do not help then [report your issue](../../issues/new) along with the following information:
+
+- Output of the `docker version` and `docker info` commands
+- The `docker run` command or `docker-compose.yml` used to start the image. Mask out the sensitive bits.
+- Please state if you are using [Boot2Docker](http://www.boot2docker.io), [VirtualBox](https://www.virtualbox.org), etc.
