@@ -6,8 +6,11 @@ import ly.gerge.rancher2git.repo.GitRepo;
 import ly.gerge.rancher2git.zip.ZipAgent;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.TransportException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -38,12 +41,23 @@ public class Rancher2git {
 
             try(GitRepo gitRepo = new GitRepo("repo",repoURL,repoUSER,repoPASS)){
                 FileUtils.copyDirectory(new File("repo/.git"), new File("tmp/git"));
+            } catch (GitAPIException g){
+                if (g.getClass().equals(TransportException.class) ){
+                    System.err.println("Could not clone repo, please check your repository URL, Username and Password!");
+                    return;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            FileUtils.cleanDirectory(new File("repo"));
-            FileUtils.moveDirectory(new File("tmp/git"),new File("repo/.git"));
+            try{
+                FileUtils.cleanDirectory(new File("repo"));
+                FileUtils.moveDirectory(new File("tmp/git"),new File("repo/.git"));
+            } catch(FileNotFoundException f) {
+                System.err.println("Could not clone the repo: " + repoURL );
+                return;
+            }
+
 
             for (RancherStack zip : zips) {
                 new File("repo" + File.separator + zip.getName()).mkdirs();
@@ -52,6 +66,9 @@ public class Rancher2git {
 
             try(GitRepo gitRepo = new GitRepo("repo",repoURL,repoUSER,repoPASS)){
                 gitRepo.push();
+            } catch (GitAPIException g){
+                System.err.println("Could not push to repo, please check if " + repoUSER + " is allowed to push to the branch master.");
+                return;
             } catch (Exception e) {
                 e.printStackTrace();
             }
