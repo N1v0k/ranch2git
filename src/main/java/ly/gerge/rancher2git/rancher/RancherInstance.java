@@ -5,6 +5,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import ly.gerge.rancher2git.util.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -37,18 +38,12 @@ public class RancherInstance {
         this.apiURL = apiURL;
     }
 
-    private boolean downloadZIP(String url, String dstFile) throws IOException {
-        Authenticator.setDefault (new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(apiUser,apiPw.toCharArray());
-            }
-        });
-
-        URL website = new URL(url);
-        ReadableByteChannel rbc = Channels.newChannel(website.openStream());
-        FileOutputStream fos = new FileOutputStream(dstFile);
-        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-        return new File(dstFile).length() > 0;
+    private boolean downloadComposeZip(String stackId, String dstFile) throws IOException {
+        if(apiUser == null && apiPw == null){
+            return FileUtils.downloadFromWebResource(apiURL+"/"+stackId,dstFile) > 0;
+        }else{
+            return FileUtils.downloadFromWebResource(apiURL+"/"+stackId,dstFile,apiUser,apiPw) > 0;
+        }
     }
 
     /** This will download the rancher and docker Compose files in zip via the Rancher API **/
@@ -79,7 +74,7 @@ public class RancherInstance {
                 RancherStack stack = new RancherStack();
                 stack.setId(rStack.getString("id"));
                 stack.setName(rStack.getString("name"));
-                downloadZIP(apiURL + "/" + stack.getId() + "/composeconfig",dstDir + File.separator +stack.getName()+".zip");
+                downloadComposeZip(apiURL + "/" + stack.getId() + "/composeconfig",dstDir + File.separator +stack.getName()+".zip");
                 rancherStacks.add(stack);
             }
             return rancherStacks;
