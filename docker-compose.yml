@@ -1,0 +1,15 @@
+version: '2'
+services:
+  ranch2github:
+    image: gmentsik/ranch2git
+    environment:
+      RANCHER_APIV2_URL: http://rancher.net.nts/v2-beta
+      RANCHER_API_USER: api-user
+      RANCHER_API_PASS: api-password
+      GIT_REPO_URL: https://github.com/username/repo.git
+      GIT_REPO_USER: git-user
+      GIT_REPO_PASS: git-password
+      UPDATE_EVERY: 1h
+    stdin_open: true
+    network_mode: host
+    tty: true

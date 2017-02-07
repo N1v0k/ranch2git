@@ -98,16 +98,11 @@ docker exec -it ranch2git bash
 
 everything happens inside the `/root` folder.
 
-# To-Do
-+ refactor code and make it smaller and more effective
-+ refactor repos, own repo for application and own repo for Docker
-+ setup some kind of CI with Github for the binary
-
 # Contributing
 
 If you find this image useful here's how you can help:
 
-- Send a pull request with your awesome features and bug fixes
+- Send a pull request with your awesome features and bug fixes, to the dev branch.
 - Help users resolve their [issues](../../issues?q=is%3Aopen+is%3Aissue).
 
 # Issues
