@@ -1,7 +1,13 @@
 ## Change history
-### [v0.0.1] [31.01.2017]
+### [v0.2] [06.01.2017]
++ better error handling
++ verbosity on errors
+* some refactoring done
+
+### [v0.1] [05.01.2017]
 + Changelog
 + License
+
 * public release
 
 #### To do:
@@ -9,3 +15,8 @@
 + refactor code and make it pretty
 + tests
 + allow to use without rancher authentication
+
+[Legend]
++ added
+- removed
+* changed
