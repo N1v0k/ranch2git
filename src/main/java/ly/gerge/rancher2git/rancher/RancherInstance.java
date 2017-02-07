@@ -9,6 +9,7 @@ import ly.gerge.rancher2git.util.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.naming.AuthenticationException;
 import java.io.*;
 import java.net.Authenticator;
 import java.net.MalformedURLException;
@@ -26,7 +27,7 @@ public class RancherInstance {
     private String apiURL;
     private String apiUser;
     private String apiPw;
-
+    private ArrayList<RancherStack> stacks = new ArrayList<>();
 
     public RancherInstance(String apiURL, String apiUser, String apiPw) {
         this.apiURL = apiURL;
@@ -38,61 +39,53 @@ public class RancherInstance {
         this.apiURL = apiURL;
     }
 
+    /** This will download the zipped rancher and docker compose files via the Rancher API  +**/
     private boolean downloadComposeZip(String stackId, String dstFile) throws IOException {
         if(apiUser == null && apiPw == null){
-            return FileUtils.downloadFromWebResource(apiURL+"/"+stackId,dstFile) > 0;
+            return FileUtils.downloadFromWebResource(apiURL+"/"+stackId + "/composeconfig",dstFile) > 0;
         }else{
-            return FileUtils.downloadFromWebResource(apiURL+"/"+stackId,dstFile,apiUser,apiPw) > 0;
+            return FileUtils.downloadFromWebResource(apiURL+"/"+stackId + "/composeconfig",dstFile,apiUser,apiPw) > 0;
         }
     }
 
-    /** This will download the rancher and docker Compose files in zip via the Rancher API **/
-    public ArrayList<RancherStack> downloadZippedStackConfigs(String dstDir) {
-        ArrayList<RancherStack> rancherStacks = new ArrayList<>();
-        HttpResponse<JsonNode> jsonResponse;
-
-        try{
-
-            if(apiPw != null && apiUser != null){
-                System.out.println("Rancher: Authenticating with username and password");
-                jsonResponse = Unirest.get(apiURL).header("accept", "application/json").basicAuth(apiUser,apiPw).asJson();
-
-            }else{
-                System.out.println("Rancher: No authentication required.");
-                jsonResponse = Unirest.get(apiURL).header("accept", "application/json").asJson();
+    /** Download stacks in Batches **/
+    public void downloadStacks(ArrayList<RancherStack> stacks, String baseDir){
+        stacks.forEach(x -> {
+            try {
+                downloadComposeZip(x.getId(), baseDir + File.separator + x.getName() + ".zip");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        });
+    }
 
-            if (jsonResponse.getStatus() == 401){
-                System.err.println("Rancher: Unauthorized. Aborting.");
-                return null;
+    /** fetch stacks from server **/
+    public ArrayList<RancherStack> fetchRancherStacks() throws UnirestException, AuthenticationException {
+        HttpResponse<JsonNode> jsonResponse = null;
+
+        if(apiPw != null && apiUser != null)
+            jsonResponse = Unirest.get(apiURL).header("accept", "application/json").basicAuth(apiUser,apiPw).asJson();
+
+        if(apiUser == null && apiPw == null)
+            jsonResponse = Unirest.get(apiURL).header("accept", "application/json").asJson();
+
+        if (jsonResponse != null) {
+            if(jsonResponse.getStatus() == 401)
+                throw new AuthenticationException("Rancher Server returned 401 (Unauthorized).");
+
+            JSONArray jsonStacks = jsonResponse.getBody().getObject().getJSONArray("data");
+
+            for(int i = 0; i<jsonStacks.length();i++){
+                JSONObject rStack = (JSONObject) jsonStacks.get(i);
+                RancherStack newStack = new RancherStack();
+                newStack.setId(rStack.getString("id"));
+                newStack.setName(rStack.getString("name"));
+                this.stacks.add(newStack);
             }
-
-            JSONArray stacks = jsonResponse.getBody().getObject().getJSONArray("data");
-
-            for(int i = 0; i<stacks.length();i++){
-                JSONObject rStack = (JSONObject) stacks.get(i);
-                RancherStack stack = new RancherStack();
-                stack.setId(rStack.getString("id"));
-                stack.setName(rStack.getString("name"));
-                downloadComposeZip(apiURL + "/" + stack.getId() + "/composeconfig",dstDir + File.separator +stack.getName()+".zip");
-                rancherStacks.add(stack);
-            }
-            return rancherStacks;
-
-        } catch (UnirestException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        }else{
+            System.err.println("Could not fetch stacks from server.");
+            return null;
         }
-        return null;
+        return this.stacks;
     }
-
-    public void checkIn(){
-
-    }
-
 }

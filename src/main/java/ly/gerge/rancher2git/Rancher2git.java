@@ -1,5 +1,6 @@
 package ly.gerge.rancher2git;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
 import ly.gerge.rancher2git.rancher.RancherInstance;
 import ly.gerge.rancher2git.rancher.RancherStack;
 import ly.gerge.rancher2git.repo.GitRepo;
@@ -9,14 +10,13 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.TransportException;
 
+import javax.naming.AuthenticationException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created by gerge on 05.02.2017.
- */
+/*** Created by Gergely Mentsik on 05.02.2017. */
 public class Rancher2git {
     public static void main(String[] args) {
 
@@ -28,8 +28,6 @@ public class Rancher2git {
         String repoUSER =  args[4];
         String repoPASS =  args[5];
 
-
-
         try {
             RancherInstance rancherInstance = new RancherInstance(rancherApiURL,rancherUSER,rancherPASS);
 
@@ -37,7 +35,8 @@ public class Rancher2git {
             FileUtils.deleteDirectory(new File("repo"));
             new File("tmp").mkdirs();
 
-            ArrayList<RancherStack> zips =  rancherInstance.downloadZippedStackConfigs("tmp");
+            ArrayList<RancherStack> rancherStacks = rancherInstance.fetchRancherStacks();
+            rancherInstance.downloadStacks(rancherStacks,"tmp");
 
             try(GitRepo gitRepo = new GitRepo("repo",repoURL,repoUSER,repoPASS)){
                 FileUtils.copyDirectory(new File("repo/.git"), new File("tmp/git"));
@@ -59,9 +58,9 @@ public class Rancher2git {
             }
 
 
-            for (RancherStack zip : zips) {
-                new File("repo" + File.separator + zip.getName()).mkdirs();
-                ZipAgent.unzip("tmp"+File.separator+zip.getName() + ".zip", "repo" + File.separator +zip.getName());
+            for (RancherStack stack : rancherStacks) {
+                new File("repo" + File.separator + stack.getName()).mkdirs();
+                ZipAgent.unzip("tmp"+File.separator+stack.getName() + ".zip", "repo" + File.separator +stack.getName());
             }
 
             try(GitRepo gitRepo = new GitRepo("repo",repoURL,repoUSER,repoPASS)){
@@ -76,6 +75,10 @@ public class Rancher2git {
         } catch (ZipException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        } catch (AuthenticationException e) {
             e.printStackTrace();
         }
     }
