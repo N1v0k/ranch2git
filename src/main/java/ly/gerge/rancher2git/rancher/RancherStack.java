@@ -1,8 +1,7 @@
 package ly.gerge.rancher2git.rancher;
 
-/**
- * Created by gerge on 05.02.2017.
- */
+/*** Created by Gergely Mentsik on 05.02.2017 */
+
 public class RancherStack {
     private String name;
     private String id;
@@ -11,15 +10,15 @@ public class RancherStack {
         return name;
     }
 
-    public void setName(String name) {
+    void setName(String name) {
         this.name = name;
     }
 
-    public String getId() {
+    String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    void setId(String id) {
         this.id = id;
     }
 }

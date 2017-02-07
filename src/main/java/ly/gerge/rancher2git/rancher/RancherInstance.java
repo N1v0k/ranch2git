@@ -19,9 +19,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 
-/**
- * Created by Gergely Mentsik on 05.02.2017
- */
+/*** Created by Gergely Mentsik on 05.02.2017 */
 
 public class RancherInstance {
     private String apiURL;
