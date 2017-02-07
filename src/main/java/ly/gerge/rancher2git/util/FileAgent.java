@@ -1,5 +1,8 @@
 package ly.gerge.rancher2git.util;
 
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,7 +14,7 @@ import java.nio.channels.ReadableByteChannel;
 
 /*** Created by Gergely Mentsik on 07.02.2017. */
 
-public class FileUtils {
+public class FileAgent {
 
     public static long downloadFromWebResource(String webURL, String destinationPath, String authUser, String authPass) throws IOException {
         if(authUser != null && authPass != null){
@@ -33,5 +36,9 @@ public class FileUtils {
         FileOutputStream fos = new FileOutputStream(destinationPath);
         fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
         return new File(destinationPath).length();
+    }
+
+    public static void unzip(String source, String destination) throws ZipException {
+        new ZipFile(source).extractAll(destination);
     }
 }

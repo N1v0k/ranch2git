@@ -5,18 +5,12 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import ly.gerge.rancher2git.util.FileUtils;
+import ly.gerge.rancher2git.util.FileAgent;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.naming.AuthenticationException;
 import java.io.*;
-import java.net.Authenticator;
-import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 
 /*** Created by Gergely Mentsik on 05.02.2017 */
@@ -40,9 +34,9 @@ public class RancherInstance {
     /** This will download the zipped rancher and docker compose files via the Rancher API  +**/
     private boolean downloadComposeZip(String stackId, String dstFile) throws IOException {
         if(apiUser == null && apiPw == null){
-            return FileUtils.downloadFromWebResource(apiURL+"/"+stackId + "/composeconfig",dstFile) > 0;
+            return FileAgent.downloadFromWebResource(apiURL+"/"+stackId + "/composeconfig",dstFile) > 0;
         }else{
-            return FileUtils.downloadFromWebResource(apiURL+"/"+stackId + "/composeconfig",dstFile,apiUser,apiPw) > 0;
+            return FileAgent.downloadFromWebResource(apiURL+"/"+stackId + "/composeconfig",dstFile,apiUser,apiPw) > 0;
         }
     }
 

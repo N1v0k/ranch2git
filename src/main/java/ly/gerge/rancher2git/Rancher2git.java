@@ -4,7 +4,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import ly.gerge.rancher2git.rancher.RancherInstance;
 import ly.gerge.rancher2git.rancher.RancherStack;
 import ly.gerge.rancher2git.repo.GitRepo;
-import ly.gerge.rancher2git.zip.ZipAgent;
+import ly.gerge.rancher2git.util.FileAgent;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -47,6 +47,7 @@ public class Rancher2git {
 
             System.out.print("Cloning git repository ... ");
             try(GitRepo gitRepo = new GitRepo("repo",repoURL,repoUSER,repoPASS)){
+                gitRepo.close();
                 FileUtils.copyDirectory(new File("repo/.git"), new File("tmp/git"));
                 FileUtils.cleanDirectory(new File("repo"));
                 FileUtils.moveDirectory(new File("tmp/git"),new File("repo/.git"));
@@ -59,7 +60,7 @@ public class Rancher2git {
             System.out.print("Copying configs into the repository ... ");
             for (RancherStack stack : rancherStacks) {
                 if(new File("repo" + File.separator + stack.getName()).mkdirs())
-                    ZipAgent.unzip("tmp"+File.separator+stack.getName() + ".zip", "repo" + File.separator +stack.getName());
+                    FileAgent.unzip("tmp"+File.separator+stack.getName() + ".zip", "repo" + File.separator +stack.getName());
             }
             System.out.print("done. \n");
 
