@@ -13,10 +13,6 @@
 - [Contributing](#contributing)
 - [Issues](#issues)
 
-# Warning
-This code is in the stage of "Proof-of-concept".
-This means that there is a lot of work todo yet. The application works, but the code is a total mess.
-
 # Introduction
 
 Ranch2Git keeps track of your [Rancher](http://rancher.com/) stacks.

@@ -18,7 +18,8 @@ import java.util.ArrayList;
 public class Rancher2git {
     public static void main(String[] args) throws Exception {
 
-        System.out.println("Starting up...");
+        System.out.print("Starting up ... ");
+
         String rancherApiURL = args[0] + "/stacks";
         String rancherUSER =  args[1];
         String rancherPASS =  args[2];
@@ -29,6 +30,7 @@ public class Rancher2git {
         try {
             RancherInstance rancherInstance = new RancherInstance(rancherApiURL,rancherUSER,rancherPASS);
 
+            System.out.print("cleaning.\n");
             FileUtils.deleteDirectory(new File("tmp"));
             FileUtils.deleteDirectory(new File("repo"));
 
@@ -37,34 +39,39 @@ public class Rancher2git {
                 return;
             }
 
+            System.out.print("Fetching rancher stacks ... ");
             ArrayList<RancherStack> rancherStacks = rancherInstance.fetchRancherStacks();
+            System.out.print(" downloading them ... ");
             rancherInstance.downloadStacks(rancherStacks,"tmp");
+            System.out.print("done. \n");
 
+            System.out.print("Cloning git repository ... ");
             try(GitRepo gitRepo = new GitRepo("repo",repoURL,repoUSER,repoPASS)){
                 FileUtils.copyDirectory(new File("repo/.git"), new File("tmp/git"));
-            } catch (GitAPIException g){
-                System.err.println("Could not clone repo, please check your repository URL, Username and Password!");
-                return;
-            }
-
-            try{
                 FileUtils.cleanDirectory(new File("repo"));
                 FileUtils.moveDirectory(new File("tmp/git"),new File("repo/.git"));
-            } catch(FileNotFoundException f) {
-                System.err.println("Could not clone the repo: " + repoURL );
+            } catch (GitAPIException | FileNotFoundException f){
+                System.err.println("Could not clone repo, please check your repository URL, Username and Password! URL: " + repoURL );
                 return;
             }
+            System.out.print("done. \n");
 
+            System.out.print("Copying configs into the repository ... ");
             for (RancherStack stack : rancherStacks) {
                 if(new File("repo" + File.separator + stack.getName()).mkdirs())
                     ZipAgent.unzip("tmp"+File.separator+stack.getName() + ".zip", "repo" + File.separator +stack.getName());
             }
+            System.out.print("done. \n");
 
+            System.out.print("Pushing the repo ... ");
             try(GitRepo gitRepo = new GitRepo("repo",repoURL,repoUSER,repoPASS)){
                 gitRepo.push();
             } catch (GitAPIException g){
-                System.err.println("Could not push to repo, please check if " + repoUSER + " is allowed to push to the branch master.");
+                System.err.println("\n Could not push to repo, please check if " + repoUSER + " is allowed to push to the branch master.");
             }
+            System.out.print("done. \n");
+
+            System.out.println("Successfully finished.");
 
         } catch (ZipException e) {
             System.err.println("Error while handling the Zip file: " + e.getMessage());
