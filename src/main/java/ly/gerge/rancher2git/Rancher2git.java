@@ -8,8 +8,6 @@ import ly.gerge.rancher2git.zip.ZipAgent;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.TransportException;
-
 import javax.naming.AuthenticationException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,7 +16,7 @@ import java.util.ArrayList;
 
 /*** Created by Gergely Mentsik on 05.02.2017. */
 public class Rancher2git {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         System.out.println("Starting up...");
         String rancherApiURL = args[0] + "/stacks";
@@ -33,7 +31,11 @@ public class Rancher2git {
 
             FileUtils.deleteDirectory(new File("tmp"));
             FileUtils.deleteDirectory(new File("repo"));
-            new File("tmp").mkdirs();
+
+            if(! new File("tmp").mkdirs()){
+                System.err.println("Could not create temporary directory. Exiting.");
+                return;
+            }
 
             ArrayList<RancherStack> rancherStacks = rancherInstance.fetchRancherStacks();
             rancherInstance.downloadStacks(rancherStacks,"tmp");
@@ -41,12 +43,8 @@ public class Rancher2git {
             try(GitRepo gitRepo = new GitRepo("repo",repoURL,repoUSER,repoPASS)){
                 FileUtils.copyDirectory(new File("repo/.git"), new File("tmp/git"));
             } catch (GitAPIException g){
-                if (g.getClass().equals(TransportException.class) ){
-                    System.err.println("Could not clone repo, please check your repository URL, Username and Password!");
-                    return;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("Could not clone repo, please check your repository URL, Username and Password!");
+                return;
             }
 
             try{
@@ -57,29 +55,25 @@ public class Rancher2git {
                 return;
             }
 
-
             for (RancherStack stack : rancherStacks) {
-                new File("repo" + File.separator + stack.getName()).mkdirs();
-                ZipAgent.unzip("tmp"+File.separator+stack.getName() + ".zip", "repo" + File.separator +stack.getName());
+                if(new File("repo" + File.separator + stack.getName()).mkdirs())
+                    ZipAgent.unzip("tmp"+File.separator+stack.getName() + ".zip", "repo" + File.separator +stack.getName());
             }
 
             try(GitRepo gitRepo = new GitRepo("repo",repoURL,repoUSER,repoPASS)){
                 gitRepo.push();
             } catch (GitAPIException g){
                 System.err.println("Could not push to repo, please check if " + repoUSER + " is allowed to push to the branch master.");
-                return;
-            } catch (Exception e) {
-                e.printStackTrace();
             }
 
         } catch (ZipException e) {
-            e.printStackTrace();
+            System.err.println("Error while handling the Zip file: " + e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error while handling a file: " + e.getMessage());
         } catch (UnirestException e) {
-            e.printStackTrace();
+            System.err.println("API communication Error: " + e.getMessage());
         } catch (AuthenticationException e) {
-            e.printStackTrace();
+            System.err.println("Authentication failed: " + e.getMessage());
         }
     }
 }
