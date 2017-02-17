@@ -30,6 +30,20 @@ public class GitRepo implements AutoCloseable{
         initRepo();
     }
 
+    public GitRepo(String localPath, String remote) throws IOException, GitAPIException {
+        this.localPath = new File(localPath);
+        this.remote = remote;
+        initPublicRepo();
+    }
+
+    private void initPublicRepo() throws IOException, GitAPIException {
+        if(localPath.exists()){
+            git = Git.open(localPath);
+        }else{
+            git = Git.cloneRepository().setURI(remote).setDirectory(new File(localPath.getPath())).call();
+        }
+    }
+
     private void initRepo() throws IOException, GitAPIException {
         if(localPath.exists()){
             git = Git.open(localPath);
