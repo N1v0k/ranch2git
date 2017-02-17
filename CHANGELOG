@@ -1,4 +1,9 @@
 ## Change history
+### [v0.3] [17.01.2017]
++ test for git cloning
++ test stage for ci
++ some nice badges
+
 ### [v0.2] [06.01.2017]
 + better error handling
 + verbosity on errors
