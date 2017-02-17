@@ -1,8 +1,11 @@
 # Ranch2Git
-[ ![Codeship Status for Gmentsik/ranch2git](https://app.codeship.com/projects/c5be5190-cedd-0134-3391-22c62aa246c8/status?branch=master)](https://app.codeship.com/projects/200689)
+
 [![](https://images.microbadger.com/badges/image/gmentsik/ranch2git.svg)](https://microbadger.com/images/gmentsik/ranch2git "Get your own image badge on microbadger.com")
 [![Docker Repository on Quay](https://quay.io/repository/gmentsik/ranch2git/status "Docker Repository on Quay")](https://quay.io/repository/gmentsik/ranch2git)
-
+[![Codeship](https://img.shields.io/codeship/c5be5190-cedd-0134-3391-22c62aa246c8.svg?style=flat-square)](https://app.codeship.com/projects/c5be5190-cedd-0134-3391-22c62aa246c8)
+[![Docker Automated buil](https://img.shields.io/docker/automated/gmentsik/ranch2git.svg?style=flat-square)](https://hub.docker.com/r/gmentsik/ranch2git/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/gmentsik/ranch2git.svg?style=flat-square)](https://hub.docker.com/r/gmentsik/ranch2git)
+[![Docker Stars](https://img.shields.io/docker/stars/gmentsik/ranch2git.svg?style=flat-square)](https://hub.docker.com/r/gmentsik/ranch2git)
 
 - [Introduction](#introduction)
 - [Getting started](#getting-started)
