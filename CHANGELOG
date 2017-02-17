@@ -20,6 +20,8 @@
 + refactor code and make it pretty
 + tests
 + allow to use without rancher authentication
++ add SSH login support
+* do not do a fresh clone of the repo everytime
 
 [Legend]
 + added
