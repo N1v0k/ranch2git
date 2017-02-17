@@ -1,7 +1,15 @@
 stages:
+  - test
   - build
   - docker
   - deploy
+
+test:
+  stage: test
+  image: maven:3.3.9-jdk-8-alpine
+  script:
+  - mvn clean validate compile test -B
+  - rm -R "tests"
 
 maven:
   stage: build
