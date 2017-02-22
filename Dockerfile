@@ -15,4 +15,4 @@ RUN chmod 755 /root/start.sh
 
 WORKDIR /root
 
-ENTRYPOINT["/root/start.sh"]
+ENTRYPOINT ["/root/run.sh"]
