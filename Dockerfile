@@ -11,6 +11,8 @@ ENV RANCHER_APIV2_URL = ""\
 COPY target/rancher2git-jar-with-dependencies.jar /root/rancher2git.jar
 COPY scripts/start.sh /root/start.sh
 
+RUN chmod 755 /root/start.sh
+
 WORKDIR /root
 
 CMD ./start.sh
