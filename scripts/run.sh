@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 if [ -n "$RANCHER_APIV2_URL" ]; then
     while true; do
