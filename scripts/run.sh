@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+echo "[v0.4] [23.02.2017]"
+
 if [ -n "$RANCHER_APIV2_URL" ]; then
     while true; do
 

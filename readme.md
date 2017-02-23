@@ -12,6 +12,7 @@
   - [Installation](#installation)
   - [Quickstart](#quickstart)
   - [Environment Variables](#environment-variables)
+  - [Labels (Rancher API V1)](#labels)
 - [To-Do](#todo)
 - [Contributing](#contributing)
 - [Issues](#issues)
@@ -74,6 +75,26 @@ services:
       io.rancher.container.pull_image: always
 ```
 
+*OR you can use the v1 API for older rancher versions
+
+```yaml
+version: '2'
+services:
+  ranch2github:
+    image: gmentsik/ranch2git
+    environment:
+      GIT_REPO_URL: https://github.com/username/repo.git
+      GIT_REPO_USER: git-user
+      GIT_REPO_PASS: git-password
+      UPDATE_EVERY: 1h
+    labels:
+      io.rancher.container.create_agent: "true"
+      io.rancher.container.agent.role: "environment"
+    stdin_open: true
+    network_mode: host
+    tty: true
+```
+
 *Alternatively, you can use the sample [docker-compose.yml](docker-compose.yml) file to start the container using [Docker Compose](https://docs.docker.com/compose/)*
 
 ## Environment Variables
@@ -89,7 +110,14 @@ services:
 | GIT_REPO_PASS     | ""              | Your Git Password                                                               | `soVeryStrongPasswordCannotBeHacked`              |
 | UPDATE_EVERY      | "5m"            | The Frequency of the script execution.                                          | `1m`, `10s`, `2h`                                 |
 
+## Labels (Rancher API V1)
+You can use the v1 API by adding two labels to your service
+
+      io.rancher.container.create_agent=true
+      io.rancher.container.agent.role=environment
     
+
+This will provide the three environment variables required to access the rancher api.
 
 ## Shell Access
 
