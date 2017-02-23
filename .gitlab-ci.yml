@@ -27,9 +27,11 @@ Gitlab:
   stage: deploy
   image: docker:latest
   script:
+    - apk update && apk --no-cache add git
     - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
     - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME" .
     - docker push "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
+    - git push "https://$github_repo_user:$github_repo_pw@github.com/Gmentsik/ranch2git.git" HEAD:dev
 
 Github:
   stage: deploy

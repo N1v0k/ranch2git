@@ -12,7 +12,7 @@
   - [Installation](#installation)
   - [Quickstart](#quickstart)
   - [Environment Variables](#environment-variables)
-  - [Labels (Rancher API V1)](#labels)
+  - [Labels (Rancher API V1)](#labels-(rancher-api-v1))
 - [To-Do](#todo)
 - [Contributing](#contributing)
 - [Issues](#issues)
