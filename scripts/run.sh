@@ -28,4 +28,4 @@ echo "You have to provide your Rancher API URL either by setting RANCHER_APIV2_U
 echo "io.rancher.container.create_agent=true"
 echo "io.rancher.container.agent.role=environment"
 
-exit -1
+exit 1
