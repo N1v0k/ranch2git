@@ -133,7 +133,7 @@ everything happens inside the `/root` folder.
 
 If you find this image useful here's how you can help:
 
-- Send a pull request with your awesome features and bug fixes, to the dev branch.
+- Send a pull request with your awesome features and bug fixes, to the `dev branch`.
 - Help users resolve their [issues](../../issues?q=is%3Aopen+is%3Aissue).
 
 # Issues
