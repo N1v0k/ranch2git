@@ -12,6 +12,8 @@ import javax.naming.AuthenticationException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.util.ArrayList;
 
 /*** Created by Gergely Mentsik on 05.02.2017. */
@@ -45,6 +47,8 @@ public class Rancher2git {
             rancherInstance.downloadStacks(rancherStacks,"tmp");
             System.out.print("done. \n");
 
+            Authenticator.setDefault (null); //Fixed the Basic Authentication Error for GitRepo.
+
             System.out.print("Cloning git repository ... ");
             try(GitRepo gitRepo = new GitRepo("repo",repoURL,repoUSER,repoPASS)){
                 gitRepo.close();
@@ -53,9 +57,12 @@ public class Rancher2git {
                 FileUtils.moveDirectory(new File("tmp/git"),new File("repo/.git"));
             } catch (GitAPIException | FileNotFoundException f){
                 System.err.println("Could not clone repo, please check your repository URL, Username and Password! URL: " + repoURL );
+                f.printStackTrace();
+                System.err.println("User: " + repoUSER + " Password: " + repoPASS);
                 return;
             }
             System.out.print("done. \n");
+
 
             System.out.print("Copying configs into the repository ... ");
             for (RancherStack stack : rancherStacks) {

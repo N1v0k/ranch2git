@@ -35,6 +35,8 @@ public class FileAgent {
         ReadableByteChannel rbc = Channels.newChannel(website.openStream());
         FileOutputStream fos = new FileOutputStream(destinationPath);
         fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+        rbc.close();
+        fos.close();
         return new File(destinationPath).length();
     }
 
